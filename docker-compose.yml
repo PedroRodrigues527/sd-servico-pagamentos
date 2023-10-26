@@ -1,0 +1,11 @@
+version: '3'
+services:
+  mariadb:
+    build:
+      context: ./db
+      dockerfile: Dockerfile
+    container_name: mariadbtest
+    environment:
+      MYSQL_ROOT_PASSWORD: mypass
+    ports:
+      - "3306:3306"

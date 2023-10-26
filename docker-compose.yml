@@ -1,11 +1,10 @@
 version: '3'
 services:
   mariadb:
-    build:
-      context: ./db
-      dockerfile: Dockerfile
+    image: mariadb:latest
     container_name: mariadbtest
     environment:
       MYSQL_ROOT_PASSWORD: mypass
+      MYSQL_DATABASE: laravel_novo
     ports:
       - "3306:3306"

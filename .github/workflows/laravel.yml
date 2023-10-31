@@ -17,12 +17,17 @@ jobs:
         php-version: '8.0'
     - uses: actions/checkout@v3
     - name: Copy .env
+      working-directory: ./api
       run: php -r "file_exists('.env') || copy('.env.example', '.env');"
     - name: Install Dependencies
+      working-directory: ./api
       run: composer install
     - name: Generate key
+      working-directory: ./api
       run: php artisan key:generate
     - name: Directory Permissions
+      working-directory: ./api
       run: chmod -R 777 storage bootstrap/cache
     - name: Execute tests (Unit and Feature tests) via PHPUnit
+      working-directory: ./api
       run: vendor/bin/phpunit

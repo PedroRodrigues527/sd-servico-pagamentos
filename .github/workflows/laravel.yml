@@ -19,6 +19,9 @@ jobs:
     - name: Copy .env
       working-directory: ./api
       run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+    - name: Update Dependencies
+      working-directory: ./api
+      run: composer update
     - name: Install Dependencies
       working-directory: ./api
       run: composer install

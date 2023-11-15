@@ -1,0 +1,93 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "SD Payment API",
+        "version": "0.0.1"
+    },
+    "paths": {
+        "/api/payment": {
+            "post": {
+                "tags": [
+                    "Payment"
+                ],
+                "summary": "Generate payment",
+                "description": "Generate payment.",
+                "operationId": "generatePayment",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "paymentAmount": {
+                                        "type": "number",
+                                        "example": "100.00"
+                                    },
+                                    "information": {
+                                        "type": "string",
+                                        "example": "Payment for services"
+                                    },
+                                    "expirationDate": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2023-12-31"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Payment generated successfully"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/api/payment/{paymentId}": {
+            "get": {
+                "tags": [
+                    "Payment"
+                ],
+                "summary": "Get payment details",
+                "description": "Get payment details.",
+                "operationId": "getPaymentDetails",
+                "parameters": [
+                    {
+                        "name": "paymentId",
+                        "in": "path",
+                        "description": "ID of the payment",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "Payment not found"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        }
+    }
+}

@@ -4,6 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Payment;
+use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Utils;
+use GuzzleHttp\Psr7\Request as HttpRequest;
+use Illuminate\Support\Facades\Validator;
 
 class PaymentController extends Controller
 {
@@ -40,18 +46,35 @@ class PaymentController extends Controller
      */
     public function generatePayment(Request $request)
     {
-        $request->validate([
-            'paymentAmount' => 'required|numeric',
-            'information' => 'required|string',
-            'expirationDate' => 'required|date',
+        $validator = Validator::make($request->all(), [
+            'amount' => 'required|numeric',
+            'information' => 'string',
+            'expirationDate' => 'date',
         ]);
 
-        $paymentAmount = $request->input('paymentAmount');
+        if ($validator->fails()) {
+            // If validation fails, return the errors
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $paymentAmount = $request->input('amount');
         $information = $request->input('information');
         $expirationDate = $request->input('expirationDate');
 
+        $client = new Client();
+        $headers = [
+        'PayPay-ClientId' => env('PAYPAY_API_NIF'),
+        'Content-Type' => 'application/json',
+        'Authorization' => 'Basic '.base64_encode(env('PAYPAY_API_CODE').':'.env('PAYPAY_API_PRIVATE_KEY'))
+        ];
+        $body = '{
+            "type": "payment",
+            "amount": '.$paymentAmount.'
+        }';
+        $request = new HttpRequest('POST', env('PAYPAY_API_ENDPOINT').'payments/references', $headers, $body);
+        $res = $client->send($request);
 
-        return response()->json(['message' => 'Payment generated successfully']);
+        return response()->json($res->getBody()->getContents());
     }
 
 

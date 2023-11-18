@@ -33,6 +33,18 @@ jobs:
       -
         name: Checkout
         uses: actions/checkout@v3
+      - 
+        name: Copy .env
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+      - 
+        name: Update Dependencies
+        run: composer update
+      - 
+        name: Install Dependencies
+        run: composer install
+      - 
+        name: Generate key
+        run: php artisan key:generate
       -
         name: building
         run: docker-compose build

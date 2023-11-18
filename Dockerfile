@@ -27,8 +27,5 @@ RUN composer install --optimize-autoloader --no-dev
 # Set permissions for Laravel
 RUN chown -R www-data:www-data /var/www/html/storage
 
-# Expose port 80 for the web server
-EXPOSE 80
-
 # Start Apache in the foreground
 CMD ["apache2-foreground"]

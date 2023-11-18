@@ -1,4 +1,3 @@
-# FROM php:8.2-apache
 FROM php:8.2-fpm
 
 WORKDIR /var/www/html
@@ -18,5 +17,6 @@ RUN composer install
 
 RUN chown -R www-data:www-data /var/www/html/storage
 
+EXPOSE 30001
+
 CMD ["php-fpm"]
-# CMD ["apache2-foreground"]

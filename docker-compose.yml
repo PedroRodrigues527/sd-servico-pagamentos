@@ -17,10 +17,6 @@ services:
             XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
             XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
-            PAYPAY_API_ENDPOINT: '${ PAYPAY_API_ENDPOINT }'
-            PAYPAY_API_CODE: '${ PAYPAY_API_CODE }'
-            PAYPAY_API_PRIVATE_KEY: '${ PAYPAY_API_PRIVATE_KEY }'
-            PAYPAY_API_NIF: '${ PAYPAY_API_NIF }'
         volumes:
             - '.:/var/www/html'
         networks:

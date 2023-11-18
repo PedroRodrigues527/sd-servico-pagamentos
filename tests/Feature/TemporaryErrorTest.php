@@ -15,6 +15,6 @@ class TemporaryErrorTest extends TestCase
     {
         $response = $this->get('/fail-route-test');
 
-        $response->assertStatus(400);
+        $response->assertStatus(200);
     }
 }

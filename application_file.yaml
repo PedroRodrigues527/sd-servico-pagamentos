@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: payment_service
+  namespace: argocd
+spec:
+  project: default
+  source: 
+    repoURL: https://github.com/PedroRodrigues527/sd-servico-pagamentos.git
+    targetRevision: HEAD
+    path: k3sconfig
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: sge
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+    - FailOnSharedResource=true
+    automated:
+      selfHeal: true
+      prune: true

@@ -7,7 +7,7 @@ on:
 
 jobs:
   unit-testing:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest 
     steps:
     - uses: shivammathur/setup-php@15c43e89cdef867065b0213be354c2841860869e
       with:
@@ -29,6 +29,11 @@ jobs:
   build:
     needs: unit-testing
     runs-on: ubuntu-latest
+    env: 
+      PAYPAY_API_CODE: ${{ secrets.PAYPAY_API_CODE }} 
+      PAYPAY_API_NIF: ${{ secrets.PAYPAY_API_NIF }} 
+      PAYPAY_API_PRIVATE_KEY: ${{ secrets.PAYPAY_API_PRIVATE_KEY }} 
+      PAYPAY_API_ENDPOINT: ${{ secrets.PAYPAY_API_ENDPOINT }}
     steps:
       -
         name: Checkout

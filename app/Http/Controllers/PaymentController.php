@@ -18,14 +18,14 @@ class PaymentController extends Controller
      * Generate payment.
      *
      * @OA\Post(
-     *     path="/api/payment",
+     *     path="/api/payments",
      *     operationId="generatePayment",
      *     tags={"Payment"},
      *     summary="Generate payment",
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             @OA\Property(property="paymentAmount", type="number", example="100.00"),
+     *             @OA\Property(property="amount", type="number", example="100.00"),
      *             @OA\Property(property="information", type="string", example="Payment for services"),
      *             @OA\Property(property="expirationDate", type="string", format="date", example="2023-12-31"),
      *         )
@@ -57,7 +57,7 @@ class PaymentController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $paymentAmount = $request->input('amount');
+        $amount = $request->input('amount');
         $information = $request->input('information');
         $expirationDate = $request->input('expirationDate');
 
@@ -69,7 +69,7 @@ class PaymentController extends Controller
         ];
         $body = '{
             "type": "payment",
-            "amount": '.$paymentAmount.'
+            "amount": '.$amount.'
         }';
         $request = new HttpRequest('POST', env('PAYPAY_API_ENDPOINT').'payments/references', $headers, $body);
         $res = $client->send($request);
@@ -77,12 +77,11 @@ class PaymentController extends Controller
         return response()->json($res->getBody()->getContents());
     }
 
-
-     /**
+    /**
      * Get payment details.
      *
      * @OA\Get(
-     *     path="/api/payment/{paymentId}",
+     *     path="/api/payments/{paymentId}",
      *     operationId="getPaymentDetails",
      *     tags={"Payment"},
      *     summary="Get payment details",
@@ -103,15 +102,34 @@ class PaymentController extends Controller
      *     )
      * )
      */
-    public function getPaymentDetails($paymentId)
+    public function getPaymentDetails(?int $paymentId = null)
     {
 
-        $paymentDetails = [
-            'id' => $paymentId,
-            'paymentAmount' => 100.00,
-            'information' => 'Payment for services',
-            'expiredDate' => '2023-12-31',
-        ];
+        /**
+         * @todo Aceder ao model e obter pagamento
+         */
+        if (empty($paymentId)) {
+            $paymentDetails = [];
+            $paymentDetails[] = [
+                'id' => 1,
+                'amount' => 100.00,
+                'information' => 'Payment for services',
+                'expiredDate' => '2023-12-31',
+            ];
+            $paymentDetails[] = [
+                'id' => 2,
+                'amount' => 1200.00,
+                'information' => 'Reserva de evento',
+                'expiredDate' => '2024-01-02',
+            ];
+        } else {
+            $paymentDetails = [
+                'id' => $paymentId,
+                'amount' => 100.00,
+                'information' => 'Payment for services',
+                'expiredDate' => '2023-12-31',
+            ];
+        }
 
         return response()->json($paymentDetails);
     }

@@ -5,7 +5,7 @@
         "version": "0.0.1"
     },
     "paths": {
-        "/api/payment": {
+        "/api/payments": {
             "post": {
                 "tags": [
                     "Payment"
@@ -19,7 +19,7 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "paymentAmount": {
+                                    "amount": {
                                         "type": "number",
                                         "example": "100.00"
                                     },
@@ -51,7 +51,7 @@
                 }
             }
         },
-        "/api/payment/{paymentId}": {
+        "/api/payments/{paymentId}": {
             "get": {
                 "tags": [
                     "Payment"

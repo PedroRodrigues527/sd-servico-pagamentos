@@ -19,5 +19,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/payment', [PaymentController::class, 'generatePayment']);
-Route::get('/payment/{paymentId}', [PaymentController::class, 'getPaymentDetails']);
+Route::post('/payments', [PaymentController::class, 'generatePayment']);
+Route::get('/payments', [PaymentController::class, 'getPaymentDetails']);
+Route::get('/payments/{paymentId}', [PaymentController::class, 'getPaymentDetails']);

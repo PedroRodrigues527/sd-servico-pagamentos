@@ -102,6 +102,13 @@ spec:
           value: mypassword
         ports:
         - containerPort: 3306
+        volumeMounts:
+        - name: mariadb-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mariadb-storage
+        persistentVolumeClaim:
+          claimName: mariadb-pvc
 ---
 apiVersion: v1
 kind: Service
@@ -116,3 +123,15 @@ spec:
     nodePort: 30004
   selector:
     app: mariadb
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: sge
+  name: mariadb-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Mi

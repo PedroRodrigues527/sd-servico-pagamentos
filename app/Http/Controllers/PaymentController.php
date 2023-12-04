@@ -140,7 +140,7 @@ class PaymentController extends Controller
 
         $client = new Client();
       
-        $request = new HttpRequest('GET', $endpoint, [], []);
+        $request = new HttpRequest('GET', $endpoint);
         $res = $client->send($request);
 
         return response()->json($res->getBody()->getContents());

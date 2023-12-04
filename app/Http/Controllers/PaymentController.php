@@ -88,7 +88,6 @@ class PaymentController extends Controller
      *     @OA\Parameter(
      *         name="paymentId",
      *         in="path",
-     *         required=true,
      *         description="ID of the payment",
      *         @OA\Schema(type="integer", format="int64")
      *     ),
@@ -134,8 +133,53 @@ class PaymentController extends Controller
         return response()->json($paymentDetails);
     }
 
+    /**
+     * Test connection between clustered services.
+     *
+     * @OA\Post(
+     *     path="/api/testconnection",
+     *     operationId="testconnection",
+     *     tags={"Test"},
+     *     summary="Test connection between clustered services",
+     *     @OA\Parameter(
+     *         name="endpoint",
+     *         in="path",
+     *         required=true,
+     *         description="Service endpoint",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="endpoint", type="string", example="http://webapp-service:3000/events"),
+     *             
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Get contents",
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Bad Request",
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal Server Error",
+     *     )
+     * )
+     */
     public function test(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'endpoint' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            // If validation fails, return the errors
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
         $endpoint = $request->input('endpoint');
 
         $client = new Client();

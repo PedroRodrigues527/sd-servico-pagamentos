@@ -133,4 +133,16 @@ class PaymentController extends Controller
 
         return response()->json($paymentDetails);
     }
+
+    public function test(Request $request)
+    {
+        $endpoint = $request->input('endpoint');
+
+        $client = new Client();
+      
+        $request = new HttpRequest('GET', $endpoint, [], []);
+        $res = $client->send($request);
+
+        return response()->json($res->getBody()->getContents());
+    }
 }

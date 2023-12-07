@@ -29,6 +29,36 @@ class AuthController extends Controller
         ])->withCookie($cookie);
     }
 
+    /**
+     * Login
+     *
+     * @OA\Post(
+     *     path="/api/login",
+     *     operationId="login",
+     *     tags={"Authentication"},
+     *     summary="Authenticate",
+     *     @OA\Parameter(
+     *         name="username",
+     *         in="path",
+     *         description="Username",
+     *         @OA\Schema(type="string", example="grupo1")
+     *     ),
+     *     @OA\Parameter(
+     *         name="password",
+     *         in="path",
+     *         description="Password",
+     *         @OA\Schema(format="password", type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Payment not found",
+     *     )
+     * )
+     */
     public function login(LoginRequest $request) {
         $data = $request->validated();
         

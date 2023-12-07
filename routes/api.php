@@ -1,9 +1,10 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\TestingController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -34,4 +35,4 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::post("/register", [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::post('/testconnection', [PaymentController::class, 'test']);
+Route::post('/testconnection', [TestingController::class, 'test']);

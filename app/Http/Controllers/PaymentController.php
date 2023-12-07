@@ -33,6 +33,19 @@ class PaymentController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="Payment generated successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(
+     *                 property="referenceDetails",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example="1"),
+     *                 @OA\Property(property="externalId", type="integer", example="280209"),
+     *                 @OA\Property(property="entity", type="integer", example="28597"),
+     *                 @OA\Property(property="reference", type="integer", example="049959124"),
+     *                 @OA\Property(property="amount", type="integer", example="100"),
+     *             ),
+     *         ),
      *     ),
      *     @OA\Response(
      *         response=400,
@@ -47,13 +60,12 @@ class PaymentController extends Controller
     public function generatePayment(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'amount' => 'required|numeric',
-            'information' => 'string',
-            'expirationDate' => 'date',
+            'amount'            => 'required|numeric|gte:100',
+            'information'       => 'string',
+            'expirationDate'    => 'date',
         ]);
 
         if ($validator->fails()) {
-            // If validation fails, return the errors
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
@@ -63,18 +75,48 @@ class PaymentController extends Controller
 
         $client = new Client();
         $headers = [
-        'PayPay-ClientId' => env('PAYPAY_API_NIF'),
-        'Content-Type' => 'application/json',
-        'Authorization' => 'Basic '.base64_encode(env('PAYPAY_API_CODE').':'.env('PAYPAY_API_PRIVATE_KEY'))
+            'PayPay-ClientId'   => env('PAYPAY_API_NIF'),
+            'Content-Type'      => 'application/json',
+            'Authorization'     => 'Basic '.base64_encode(env('PAYPAY_API_CODE').':'.env('PAYPAY_API_PRIVATE_KEY'))
         ];
-        $body = '{
-            "type": "payment",
-            "amount": '.$amount.'
-        }';
-        $request = new HttpRequest('POST', env('PAYPAY_API_ENDPOINT').'payments/references', $headers, $body);
+        $body = [
+            'type'      => 'payment',
+            'amount'    => $amount
+        ];
+        $request = new HttpRequest('POST', env('PAYPAY_API_ENDPOINT').'payments/references', $headers, json_encode($body));
         $res = $client->send($request);
+        $paymentData = json_decode($res->getBody()->getContents(), true);
 
-        return response()->json($res->getBody()->getContents());
+        $externalId = $paymentData['data']['id'] ?? '';
+        $entity = $paymentData['data']['referenceDetails']['entity'] ?? '';
+        $reference = $paymentData['data']['referenceDetails']['reference'] ?? '';
+
+        if (!empty($paymentData['success'])) {
+            $newRow = new Payment();
+
+            $newRow->amount      = $amount;
+            $newRow->observation = $information;
+            $newRow->external_id = $externalId; 
+            $newRow->entity      = $entity; 
+            $newRow->reference   = $reference; 
+        
+            $newRow->save();
+            $paymentId = $newRow->id();
+        }
+
+        $response = [
+            'success' => !empty($paymentData['success'])
+        ];
+        
+        $response['referenceDetails'] = [
+            'id'            => $paymentId,
+            'externalId'    => $externalId,
+            'entity'        => (int) $entity,
+            'reference'     => (int) $reference,
+            'amount'        => $amount
+        ];
+
+        return response()->json($response);
     }
 
     /**
@@ -94,6 +136,14 @@ class PaymentController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="id", type="integer", example="1"),
+     *             @OA\Property(property="externalId", type="integer", example="280209"),
+     *             @OA\Property(property="entity", type="integer", example="28597"),
+     *             @OA\Property(property="reference", type="integer", example="049959124"),
+     *             @OA\Property(property="amount", type="integer", example="100"),
+     *         ),
      *     ),
      *     @OA\Response(
      *         response=404,
@@ -103,90 +153,28 @@ class PaymentController extends Controller
      */
     public function getPaymentDetails(?int $paymentId = null)
     {
+        $paymentDetails = [];
 
-        /**
-         * @todo Aceder ao model e obter pagamento
-         */
-        if (empty($paymentId)) {
-            $paymentDetails = [];
+        $query = Payment::query();
+
+        if ($paymentId) {
+            $query->where('id', $paymentId);
+        }
+
+        $rows = $query->paginate(10);
+
+        foreach ($rows as $row) {
             $paymentDetails[] = [
-                'id' => 1,
-                'amount' => 100.00,
-                'information' => 'Payment for services',
-                'expiredDate' => '2023-12-31',
-            ];
-            $paymentDetails[] = [
-                'id' => 2,
-                'amount' => 1200.00,
-                'information' => 'Reserva de evento',
-                'expiredDate' => '2024-01-02',
-            ];
-        } else {
-            $paymentDetails = [
-                'id' => $paymentId,
-                'amount' => 100.00,
-                'information' => 'Payment for services',
-                'expiredDate' => '2023-12-31',
+                'id'            => $row->id,
+                'externalId'    => $row->external_id,
+                'amount'        => $row->amount,
+                'information'   => $row->observation,
+                'entity'        => (int) $row->entity,
+                'reference'     => (int) $row->reference,
             ];
         }
 
         return response()->json($paymentDetails);
     }
 
-    /**
-     * Test connection between clustered services.
-     *
-     * @OA\Post(
-     *     path="/api/testconnection",
-     *     operationId="testconnection",
-     *     tags={"Test"},
-     *     summary="Test connection between clustered services",
-     *     @OA\Parameter(
-     *         name="endpoint",
-     *         in="path",
-     *         required=true,
-     *         description="Service endpoint",
-     *         @OA\Schema(type="string")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             @OA\Property(property="endpoint", type="string", example="http://webapp-service:3000/events"),
-     *             
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Get contents",
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Bad Request",
-     *     ),
-     *     @OA\Response(
-     *         response=500,
-     *         description="Internal Server Error",
-     *     )
-     * )
-     */
-    public function test(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'endpoint' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            // If validation fails, return the errors
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $endpoint = $request->input('endpoint');
-
-        $client = new Client();
-      
-        $request = new HttpRequest('GET', $endpoint);
-        $res = $client->send($request);
-
-        return response()->json($res->getBody()->getContents());
-    }
 }

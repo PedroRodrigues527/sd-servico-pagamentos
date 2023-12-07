@@ -5,6 +5,44 @@
         "version": "0.0.1"
     },
     "paths": {
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Authenticate",
+                "description": "Login",
+                "operationId": "login",
+                "parameters": [
+                    {
+                        "name": "username",
+                        "in": "path",
+                        "description": "Username",
+                        "schema": {
+                            "type": "string",
+                            "example": "grupo1"
+                        }
+                    },
+                    {
+                        "name": "password",
+                        "in": "path",
+                        "description": "Password",
+                        "schema": {
+                            "type": "string",
+                            "format": "password"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "Payment not found"
+                    }
+                }
+            }
+        },
         "/api/payments": {
             "post": {
                 "tags": [
@@ -40,7 +78,45 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Payment generated successfully"
+                        "description": "Payment generated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "referenceDetails": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": "1"
+                                                },
+                                                "externalId": {
+                                                    "type": "integer",
+                                                    "example": "280209"
+                                                },
+                                                "entity": {
+                                                    "type": "integer",
+                                                    "example": "28597"
+                                                },
+                                                "reference": {
+                                                    "type": "integer",
+                                                    "example": "049959124"
+                                                },
+                                                "amount": {
+                                                    "type": "integer",
+                                                    "example": "100"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "description": "Bad Request"
@@ -72,7 +148,36 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful operation"
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "externalId": {
+                                            "type": "integer",
+                                            "example": "280209"
+                                        },
+                                        "entity": {
+                                            "type": "integer",
+                                            "example": "28597"
+                                        },
+                                        "reference": {
+                                            "type": "integer",
+                                            "example": "049959124"
+                                        },
+                                        "amount": {
+                                            "type": "integer",
+                                            "example": "100"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "404": {
                         "description": "Payment not found"
@@ -88,17 +193,6 @@
                 "summary": "Test connection between clustered services",
                 "description": "Test connection between clustered services.",
                 "operationId": "testconnection",
-                "parameters": [
-                    {
-                        "name": "endpoint",
-                        "in": "path",
-                        "description": "Service endpoint",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
                 "requestBody": {
                     "required": true,
                     "content": {

@@ -22,8 +22,8 @@ services:
         networks:
             - sail
         depends_on:
-            - mariadb
-    mariadb:
+            - mariadb-service
+    mariadb-service:
         image: 'mariadb:10'
         ports:
             - '${FORWARD_DB_PORT:-3306}:3306'

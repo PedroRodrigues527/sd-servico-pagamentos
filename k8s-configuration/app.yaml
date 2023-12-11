@@ -17,7 +17,7 @@ spec:
         "kubernetes.io/os": linux
       containers:
       - name: payment-service-sd
-        image: pedromiguelrodrigues/payment_service_sd:33
+        image: pedromiguelrodrigues/payment_service_sd:34
         env:
         - name: ALLOW_EMPTY_PASSWORD
           value: "yes"
@@ -55,7 +55,7 @@ spec:
     spec:
       containers:
       - name: frontend-react
-        image: pedromiguelrodrigues/payment_service_frontend:8
+        image: pedromiguelrodrigues/payment_service_frontend:9
         ports:
         - containerPort: 3000 
 ---

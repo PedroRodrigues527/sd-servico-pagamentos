@@ -17,7 +17,7 @@ spec:
         "kubernetes.io/os": linux
       containers:
       - name: payment-service-sd
-        image: pedromiguelrodrigues/payment_service_sd:28
+        image: pedromiguelrodrigues/payment_service_sd:33
         env:
         - name: ALLOW_EMPTY_PASSWORD
           value: "yes"

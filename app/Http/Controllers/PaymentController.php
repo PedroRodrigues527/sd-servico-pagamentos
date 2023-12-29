@@ -153,6 +153,17 @@ class PaymentController extends Controller
      */
     public function getPaymentDetails(?int $paymentId = null)
     {
+
+        
+        try {
+            \Prometheus\CollectorRegistry::getDefault()
+            ->getOrRegisterCounter('', 'get_payment_details', 'get payment details counter')
+            ->inc();
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+     
+
         $paymentDetails = [];
 
         $query = Payment::query();

@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: sge
+  name: frontend-react-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-react
+  template:
+    metadata:
+      labels:
+        app: frontend-react
+    spec:
+      containers:
+      - name: frontend-react
+        image: pedromiguelrodrigues/payment_service_frontend:latest
+        ports:
+        - containerPort: 3000 

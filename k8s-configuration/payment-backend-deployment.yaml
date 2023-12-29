@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: sge
+  name: payment-service-sd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment-service-sd
+  template:
+    metadata:
+      labels:
+        app: payment-service-sd
+    spec:
+      nodeSelector:
+        "kubernetes.io/os": linux
+      initContainers:
+      - name: migrate
+        image: paytest
+        imagePullPolicy: IfNotPresent
+        command: ['php', 'artisan', 'migrate']
+        env:
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "yes"
+      containers:
+      - name: payment-service-sd
+        image: paytest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 6379
+          name: redis
+        env:
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "yes"

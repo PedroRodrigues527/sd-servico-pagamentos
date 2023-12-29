@@ -17,7 +17,7 @@ spec:
         "kubernetes.io/os": linux
       initContainers:
       - name: migrate
-        image: paytest
+        image: pedromiguelrodrigues/payment_service_sd:latest
         imagePullPolicy: IfNotPresent
         command: ['php', 'artisan', 'migrate']
         env:
@@ -25,7 +25,7 @@ spec:
           value: "yes"
       containers:
       - name: payment-service-sd
-        image: paytest
+        image: pedromiguelrodrigues/payment_service_sd:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 6379

@@ -83,13 +83,20 @@ class PaymentController extends Controller
             'type'      => 'payment',
             'amount'    => $amount
         ];
-        $request = new HttpRequest('POST', env('PAYPAY_API_ENDPOINT').'payments/references', $headers, json_encode($body));
-        $res = $client->send($request);
-        $paymentData = json_decode($res->getBody()->getContents(), true);
+        try {
+            $request = new HttpRequest('POST', env('PAYPAY_API_ENDPOINT').'payments/references', $headers, json_encode($body));
+            $res = $client->send($request);
+            $paymentData = json_decode($res->getBody()->getContents(), true);
 
-        $externalId = $paymentData['data']['id'] ?? '';
-        $entity = $paymentData['data']['referenceDetails']['entity'] ?? '';
-        $reference = $paymentData['data']['referenceDetails']['reference'] ?? '';
+            $externalId = $paymentData['data']['id'] ?? '';
+            $entity = $paymentData['data']['referenceDetails']['entity'] ?? '';
+            $reference = $paymentData['data']['referenceDetails']['reference'] ?? '';
+
+        } catch (\Exception $e) {
+            $externalId = $entity = 000000;
+            $reference = 0000000000;
+        }
+       
 
         if (!empty($paymentData['success'])) {
             $newRow = new Payment();
@@ -109,7 +116,7 @@ class PaymentController extends Controller
         ];
         
         $response['referenceDetails'] = [
-            'id'            => $paymentId,
+            'id'            => $paymentId ?? 0,
             'externalId'    => $externalId,
             'entity'        => (int) $entity,
             'reference'     => (int) $reference,
@@ -153,15 +160,20 @@ class PaymentController extends Controller
      */
     public function getPaymentDetails(?int $paymentId = null)
     {
-
-        
-        try {
-            \Prometheus\CollectorRegistry::getDefault()
-            ->getOrRegisterCounter('', 'get_payment_details', 'get payment details counter')
-            ->inc();
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
+        \Prometheus\Storage\Redis::setDefaultOptions(
+            [
+                'host' => 'redis-service',
+                'port' => 6379,
+                'password' => null,
+                'timeout' => 0.1, 
+                'read_timeout' => '10', 
+                'persistent_connections' => false
+            ]
+        );
+    
+        \Prometheus\CollectorRegistry::getDefault()
+        ->getOrRegisterCounter('', 'get_payment_details', 'get payment details counter')
+        ->inc();
      
 
         $paymentDetails = [];

@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\TestingController;
+use App\Http\Controllers\StatController;
 
 
 /*
@@ -36,3 +37,8 @@ Route::post("/register", [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::post('/testconnection', [TestingController::class, 'test']);
+
+Route::get('/metric', [StatController::class, 'metric']);
+
+
+

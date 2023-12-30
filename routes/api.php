@@ -28,12 +28,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // payments routes
     Route::post('/payments', [PaymentController::class, 'generatePayment']);
-    //Route::get('/payments', [PaymentController::class, 'getPaymentDetails']);
-    //Route::get('/payments/{paymentId}', [PaymentController::class, 'getPaymentDetails']);
+    Route::get('/payments', [PaymentController::class, 'getPaymentDetails']);
+    Route::get('/payments/{paymentId}', [PaymentController::class, 'getPaymentDetails']);
 });
-
-Route::get('/payments', [PaymentController::class, 'getPaymentDetails']);
-Route::get('/payments/{paymentId}', [PaymentController::class, 'getPaymentDetails']);
 
 Route::post("/register", [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);

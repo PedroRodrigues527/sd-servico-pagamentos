@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   namespace: sge
-  name: prometheus-config-volume
+  name: prometheus-data-volume
 spec:
   accessModes:
     - ReadWriteOnce

@@ -160,17 +160,7 @@ class PaymentController extends Controller
      */
     public function getPaymentDetails(?int $paymentId = null)
     {
-        \Prometheus\Storage\Redis::setDefaultOptions(
-            [
-                'host' => 'redis-service',
-                'port' => 6379,
-                'password' => null,
-                'timeout' => 0.1, 
-                'read_timeout' => '10', 
-                'persistent_connections' => false
-            ]
-        );
-    
+
         \Prometheus\CollectorRegistry::getDefault()
         ->getOrRegisterCounter('', 'get_payment_details', 'get payment details counter')
         ->inc();

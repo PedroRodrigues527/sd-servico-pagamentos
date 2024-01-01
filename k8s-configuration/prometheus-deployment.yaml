@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: prometheus-deployment
+  name: prometheus-server
   namespace: sge
   labels:
     app: prometheus-server
@@ -19,7 +19,7 @@ spec:
         - name: prometheus
           image: prom/prometheus
           args:
-            - "--storage.tsdb.retention.time=12h"
+            - "--storage.tsdb.retention.time=120h"
             - "--config.file=/etc/prometheus/prometheus.yml"
             - "--storage.tsdb.path=/prometheus/"
           ports:
@@ -34,13 +34,13 @@ spec:
           volumeMounts:
             - name: prometheus-config-volume
               mountPath: /etc/prometheus/
-            - name: prometheus-storage-volume
+            - name: prometheus-data-volume
               mountPath: /prometheus/
       volumes:
         - name: prometheus-config-volume
           configMap:
             defaultMode: 420
             name: prometheus-server-conf
-  
-        - name: prometheus-storage-volume
-          emptyDir: {}
+        - name: prometheus-data-volume
+          persistentVolumeClaim:
+            claimName: prometheus-data-volume

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: prometheus-server-conf
+  name: prometheus-pay-server-conf
   namespace: sge
 data:
   prometheus.yml: |

@@ -10,7 +10,7 @@ class PrometheusServiceProvider extends ServiceProvider
     public function boot()
     {
         PrometheusRedis::setDefaultOptions([
-            'host' => 'redis-service',
+            'host' => 'redis-pay-service',
             'port' => 6379,
             'password' => null,
             'timeout' => 0.1, 

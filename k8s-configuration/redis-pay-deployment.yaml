@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: sge
-  name: redis-deployment
+  name: redis-pay-deployment
 spec:
   replicas: 1
   selector:

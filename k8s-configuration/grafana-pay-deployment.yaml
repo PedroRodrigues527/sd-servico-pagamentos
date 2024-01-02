@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: grafana
+  name: grafana-pay
   namespace: sge
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: grafana
+      app: grafana-pay
   template:
     metadata:
       labels:
-        app: grafana
+        app: grafana-pay
     spec:
       containers:
-      - name: grafana
+      - name: grafana-pay
         image: grafana/grafana:latest
         ports:
         - containerPort: 3000
@@ -26,10 +26,10 @@ spec:
             memory: "500Mi"
             cpu: "500m"
         volumeMounts:
-        - name: grafana-config-volume
+        - name: grafana-pay-config-volume
           mountPath: /etc/grafana/provisioning/datasources
           readOnly: true
       volumes:
-      - name: grafana-config-volume
+      - name: grafana-pay-config-volume
         configMap:
-          name: grafana-config
+          name: grafana-pay-config

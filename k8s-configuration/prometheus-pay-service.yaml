@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: prometheus-service
+  name: prometheus-pay-server
   namespace: sge
   annotations:
       prometheus.io/scrape: 'true'
       prometheus.io/port:   '9090'
 spec:
   selector: 
-    app: prometheus-server
+    app: prometheus-pay-server
   type: NodePort  
   ports:
     - port: 9090

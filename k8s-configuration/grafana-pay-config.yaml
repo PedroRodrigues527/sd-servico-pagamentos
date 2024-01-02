@@ -11,5 +11,5 @@ data:
     - name: Prometheus
       type: prometheus
       access: proxy
-      url: http://prometheus-pay-server:8080  
+      url: http://prometheus-pay-server:9090  
       isDefault: true

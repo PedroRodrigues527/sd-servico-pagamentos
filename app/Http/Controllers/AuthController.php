@@ -31,23 +31,19 @@ class AuthController extends Controller
 
     /**
      * Login
-     *
+     * 
      * @OA\Post(
      *     path="/api/login",
      *     operationId="login",
      *     tags={"Authentication"},
-     *     summary="Authenticate",
-     *     @OA\Parameter(
-     *         name="username",
-     *         in="path",
-     *         description="Username",
-     *         @OA\Schema(type="string", example="grupo1")
-     *     ),
-     *     @OA\Parameter(
-     *         name="password",
-     *         in="path",
-     *         description="Password",
-     *         @OA\Schema(format="password", type="string")
+     *      summary="Authentication Method for Token Generation",
+     *      description="This method facilitates user authentication and returns a token, which should be used for accessing subsequent methods that require bearer token authentication. It ensures secure interaction by validating user credentials and providing a token, essential for authorized access to restricted functionalities within the system.",
+     *      @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="username", type="string", example="grupo1"),
+     *             @OA\Property(property="password", type="string", example="123"),
+     *         )
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -57,6 +53,7 @@ class AuthController extends Controller
      *         response=404,
      *         description="Payment not found",
      *     )
+     *      
      * )
      */
     public function login(LoginRequest $request) {
@@ -81,6 +78,32 @@ class AuthController extends Controller
 
     }
 
+    /**
+     * Logout
+     * 
+     * @OA\Post(
+     *     path="/api/logout",
+     *     operationId="logout",
+     *     tags={"Authentication"},
+     *     summary="This method allows ending the session",
+     *      description="The method is accessible with authentication and takes a username as a parameter for additional validation.",
+     *      @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="username", type="string", example="grupo1"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Payment not found",
+     *     )
+     *      
+     * )
+     */
     public function logout(Request $request) {
         $request->user()->currentAccessToken()->delete();
 

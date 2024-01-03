@@ -18,7 +18,8 @@ class TestingController extends Controller
      *     path="/api/testconnection",
      *     operationId="testconnection",
      *     tags={"Test"},
-     *     summary="Test connection between clustered services",
+     *     summary="A method to ensure services are reachable by their names and ports in a distributed system.",
+     *     description="The primary purpose of this method is to verify if a specific service is accessible through its assigned name and associated port.",
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(

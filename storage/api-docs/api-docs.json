@@ -10,29 +10,63 @@
                 "tags": [
                     "Authentication"
                 ],
-                "summary": "Authenticate",
-                "description": "Login",
+                "summary": "Authentication Method for Token Generation",
+                "description": "This method facilitates user authentication and returns a token, which should be used for accessing subsequent methods that require bearer token authentication. It ensures secure interaction by validating user credentials and providing a token, essential for authorized access to restricted functionalities within the system.",
                 "operationId": "login",
-                "parameters": [
-                    {
-                        "name": "username",
-                        "in": "path",
-                        "description": "Username",
-                        "schema": {
-                            "type": "string",
-                            "example": "grupo1"
-                        }
-                    },
-                    {
-                        "name": "password",
-                        "in": "path",
-                        "description": "Password",
-                        "schema": {
-                            "type": "string",
-                            "format": "password"
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "example": "grupo1"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "123"
+                                    }
+                                },
+                                "type": "object"
+                            }
                         }
                     }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "Payment not found"
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
                 ],
+                "summary": "This method allows ending the session",
+                "description": "The method is accessible with authentication and takes a username as a parameter for additional validation.",
+                "operationId": "logout",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "example": "grupo1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "Successful operation"
@@ -190,8 +224,8 @@
                 "tags": [
                     "Test"
                 ],
-                "summary": "Test connection between clustered services",
-                "description": "Test connection between clustered services.",
+                "summary": "A method to ensure services are reachable by their names and ports in a distributed system.",
+                "description": "The primary purpose of this method is to verify if a specific service is accessible through its assigned name and associated port.",
                 "operationId": "testconnection",
                 "requestBody": {
                     "required": true,

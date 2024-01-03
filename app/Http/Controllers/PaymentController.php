@@ -113,11 +113,13 @@ class PaymentController extends Controller
             $newRow->reference   = $reference; 
         
             $newRow->save();
-            $paymentId = $newRow->id();
+            $paymentId = $newRow->id;
+
+            $totalPayments = Payment::sumAllPayments();
 
             $eurosCreatedGauge = \Prometheus\CollectorRegistry::getDefault()
             ->getOrRegisterGauge('', 'euros_created', 'Amount of euros created')
-            ->add($amount);
+            ->set($totalPayments);
 
             \Prometheus\CollectorRegistry::getDefault()
             ->getOrRegisterCounter('', 'payments_generated', 'Quantity of payments generated')

@@ -18,7 +18,6 @@ spec:
       initContainers:
       - name: migrate
         image: pedromiguelrodrigues/payment_service_sd:latest
-        imagePullPolicy: IfNotPresent
         command: ['php', 'artisan', 'migrate']
         env:
         - name: ALLOW_EMPTY_PASSWORD
@@ -26,7 +25,6 @@ spec:
       containers:
       - name: payment-service-sd
         image: pedromiguelrodrigues/payment_service_sd:latest
-        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 6379
           name: redis

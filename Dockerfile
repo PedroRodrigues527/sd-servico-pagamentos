@@ -10,7 +10,7 @@ RUN a2enmod rewrite
 RUN docker-php-ext-install pdo_mysql zip
 
 RUN pecl install redis \
-    && docker-php-ext-enable redis
+    && docker-php-ext-enable redis && pecl install excimer
 
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf

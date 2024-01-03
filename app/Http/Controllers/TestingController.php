@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request as HttpRequest;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Artisan;
 
 class TestingController extends Controller
 {
@@ -57,5 +58,11 @@ class TestingController extends Controller
         $res = $client->send($request);
 
         return response()->json($res->getBody()->getContents());
+    }
+
+    public function migrate() {
+        Artisan::call('migrate', [
+            '--force' => true
+        ]);
     }
 }

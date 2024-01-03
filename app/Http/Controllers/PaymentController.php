@@ -59,6 +59,11 @@ class PaymentController extends Controller
      */
     public function generatePayment(Request $request)
     {
+
+        \Prometheus\CollectorRegistry::getDefault()
+        ->getOrRegisterCounter('', 'post_payment', 'Number of Times the POST Payment Endpoint Has Been Called')
+        ->inc();
+
         $validator = Validator::make($request->all(), [
             'amount'            => 'required|numeric|gte:100',
             'information'       => 'string',
@@ -109,6 +114,14 @@ class PaymentController extends Controller
         
             $newRow->save();
             $paymentId = $newRow->id();
+
+            $eurosCreatedGauge = \Prometheus\CollectorRegistry::getDefault()
+            ->getOrRegisterGauge('', 'euros_created', 'Amount of euros created')
+            ->add($amount);
+
+            \Prometheus\CollectorRegistry::getDefault()
+            ->getOrRegisterCounter('', 'payments_generated', 'Quantity of payments generated')
+            ->inc();
         }
 
         $response = [
@@ -162,9 +175,8 @@ class PaymentController extends Controller
     {
 
         \Prometheus\CollectorRegistry::getDefault()
-        ->getOrRegisterCounter('', 'get_payment_details', 'get payment details counter')
+        ->getOrRegisterCounter('', 'get_payment', 'Number of Times the GET Payment Endpoint Has Been Called')
         ->inc();
-     
 
         $paymentDetails = [];
 

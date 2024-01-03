@@ -27,7 +27,7 @@ class PaymentController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="amount", type="number", example="100.00"),
      *             @OA\Property(property="information", type="string", example="Payment for services"),
-     *             @OA\Property(property="expirationDate", type="string", format="date", example="2023-12-31"),
+     *             @OA\Property(property="expirationDate", type="string", format="date", example="2024-02-01"),
      *         )
      *     ),
      *     @OA\Response(

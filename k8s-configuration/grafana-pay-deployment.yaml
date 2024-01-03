@@ -29,7 +29,18 @@ spec:
         - name: grafana-pay-config-volume
           mountPath: /etc/grafana/provisioning/datasources
           readOnly: true
+        - name: grafana-dashboard-volume
+          mountPath: /var/lib/grafana/dashboards
+          readOnly: true
+        env:
+        - name: GF_DASHBOARDS_JSON_ENABLED
+          value: "true"
+        - name: GF_DASHBOARDS_JSON_PATH
+          value: /var/lib/grafana/dashboards
       volumes:
       - name: grafana-pay-config-volume
+        configMap:
+          name: grafana-pay-config
+      - name: grafana-dashboard-volume
         configMap:
           name: grafana-pay-config

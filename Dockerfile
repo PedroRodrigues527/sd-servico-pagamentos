@@ -1,7 +1,7 @@
 FROM php:8.2-apache
 
 # Install dependencies
-RUN apt-get update && apt-get install -y libzip-dev zip nodejs npm
+RUN apt-get update && apt-get install -y libzip-dev zip nodejs npm cron
     
 # Enable mod_rewrite
 RUN a2enmod rewrite
@@ -34,5 +34,15 @@ RUN npm install
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Add Cron Job
+COPY mycron /etc/cron.d/mycron
+RUN chmod 0644 /etc/cron.d/mycron
+RUN crontab /etc/cron.d/mycron
+
+# Copy and set entrypoint
+COPY entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint.sh
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 RUN php artisan key:generate

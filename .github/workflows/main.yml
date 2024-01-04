@@ -54,7 +54,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/payment_service_sd:${{ github.run_number }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/payment_service_sd:latest
           
 
 

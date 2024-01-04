@@ -204,6 +204,7 @@
                                             "example": "049959124"
                                         },
                                         "amount": {
+                                            "description": "In cents ex. 10€ equals 1000",
                                             "type": "integer",
                                             "example": "100"
                                         }

@@ -168,7 +168,7 @@ class PaymentController extends Controller
      *             @OA\Property(property="externalId", type="integer", example="280209"),
      *             @OA\Property(property="entity", type="integer", example="28597"),
      *             @OA\Property(property="reference", type="integer", example="049959124"),
-     *             @OA\Property(property="amount", type="integer", example="100"),
+     *             @OA\Property(property="amount", type="integer", example="100", description="In cents ex. 10€ equals 1000" ),
      *         ),
      *     ),
      *     @OA\Response(
@@ -253,9 +253,37 @@ class PaymentController extends Controller
                         $changePaymentStatus->update([
                             'payment_status_id' => $paymentStatusId
                         ]);
+                        $this->testnotification($row->observation);
                     }
                 }
             }
+        }
+    }
+
+    public function testnotification($eventName = '') {
+        $client = new Client();
+        
+        $headers = [
+            'Content-Type' => 'application/json',
+        ];
+
+        if (empty($eventName)) {
+            $eventName = 'Sem informação';
+        }
+        $body = [
+            'email'      => 'robertopinto202@gmail.com',
+            'notification_type'    => 'payment',
+            'payment_date_time'    => '2024-01-04T17:00',
+            'payment_event_name'    => $eventName,
+        ];
+        
+        try {
+            $request = new HttpRequest('POST', env('ENDPOINT_GRUPO_3_NOTIFICACAO').'send-notification/', $headers, json_encode($body));
+            $res = $client->send($request);
+        } catch (\Exception $e) {
+            echo 'Exception caught: ',  $e->getMessage(), "\n";
+            echo 'Exception code: ', $e->getCode(), "\n";
+            echo "Ocorreu um erro";
         }
     }
 

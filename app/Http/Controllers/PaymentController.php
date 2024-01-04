@@ -124,6 +124,10 @@ class PaymentController extends Controller
             \Prometheus\CollectorRegistry::getDefault()
             ->getOrRegisterCounter('', 'payments_generated', 'Quantity of payments generated')
             ->inc();
+
+            \Prometheus\CollectorRegistry::getDefault()
+            ->getOrRegisterCounter('', 'pending_payment_counter', 'Pending payments')
+            ->inc();
         }
 
         $response = [
@@ -202,6 +206,57 @@ class PaymentController extends Controller
         }
 
         return response()->json($paymentDetails);
+    }
+
+    public function checkPayments() {
+        \Prometheus\CollectorRegistry::getDefault()
+        ->getOrRegisterCounter('', 'cron_job', 'Number of Times the cron job Has Been Called')
+        ->inc();
+
+        $rows = Payment::query()
+            ->where('payment_status_id', 1)
+            ->get();
+
+        $headers = [
+            'PayPay-ClientId'   => env('PAYPAY_API_NIF'),
+            'Content-Type'      => 'application/json',
+            'Authorization'     => 'Basic '.base64_encode(env('PAYPAY_API_CODE').':'.env('PAYPAY_API_PRIVATE_KEY'))
+        ];
+        $client = new Client();
+        foreach ($rows as $row) {
+            $request = new HttpRequest('GET', env('PAYPAY_API_ENDPOINT').'payments?type=payment&referenceDetails_reference='.$row->reference.'&limit=1', $headers);
+            $res = $client->send($request);
+            $paymentData = json_decode($res->getBody()->getContents(), true);
+           
+            if (!empty($paymentData['success']) && !empty($paymentData['data'][0]['stateDetails']['state'])) {
+                $state = $paymentData['data'][0]['stateDetails']['state'];
+                
+                $paymentStatusId = '';
+                if ($state == 'confirmed') {
+                    \Prometheus\CollectorRegistry::getDefault()
+                    ->getOrRegisterCounter('', 'confirmed_payment_counter', 'Confirmed payments')
+                    ->inc();
+                    $paymentStatusId = 2;
+                } else if ($state == 'cancelled') {
+                    \Prometheus\CollectorRegistry::getDefault()
+                    ->getOrRegisterCounter('', 'cancelled_payment_counter', 'Cancelled payments')
+                    ->inc();
+                    $paymentStatusId = 3;
+                }
+                
+                if (!empty($paymentStatusId)) {
+                    $changePaymentStatus = Payment::find($row->id);
+                    if (!empty($changePaymentStatus)) {
+                        \Prometheus\CollectorRegistry::getDefault()
+                        ->getOrRegisterGauge('', 'pending_payment_counter', 'Pending payments')
+                        ->dec();
+                        $changePaymentStatus->update([
+                            'payment_status_id' => $paymentStatusId
+                        ]);
+                    }
+                }
+            }
+        }
     }
 
 }

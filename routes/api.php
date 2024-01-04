@@ -36,6 +36,8 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::post("/register", [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+Route::post('/check', [PaymentController::class, 'checkPayments']);
+
 Route::post('/testconnection', [TestingController::class, 'test']);
 Route::post('/migrate', [TestingController::class, 'migrate']);
 

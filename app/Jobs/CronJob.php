@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use App\Http\Controllers\PaymentController;
 
 class CronJob implements ShouldQueue
 {
@@ -19,9 +20,8 @@ class CronJob implements ShouldQueue
 
     public function handle()
     {
-        \Prometheus\CollectorRegistry::getDefault()
-        ->getOrRegisterCounter('', 'cron_job', 'Number of Times the cron job Has Been Called')
-        ->inc();
+        $controller = new PaymentController();
+        $controller->checkPayments();
 
     }
 }

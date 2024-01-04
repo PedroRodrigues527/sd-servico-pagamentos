@@ -16,6 +16,7 @@ class Payment extends Model
         'observation',
         'entity',
         'reference',
+        'payment_status_id',
     ];
 
     public static function sumAllPayments()
